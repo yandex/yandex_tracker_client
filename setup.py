@@ -21,7 +21,7 @@ setup(
     author='Yandex Team',
     author_email='smosker@yandex-team.ru',
     url='https://github.com/yandex/yandex_tracker_client',
-    long_description=read('README.md'),
+    long_description=read('README.rst'),
     packages=['yandex_tracker_client'],
     classifiers=['Development Status :: 4 - Beta',
                  'Intended Audience :: Developers',
