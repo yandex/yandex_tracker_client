@@ -466,7 +466,7 @@ class Issues(ImportCollectionMixin, Collection):
                     field=order_by,
                 )
             ]
-        return ','.join(order_list) or None
+        return order_list or None
 
     @property
     def fields(self):

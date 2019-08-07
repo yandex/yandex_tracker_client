@@ -1,3 +1,9 @@
+yandex-tracker-client (1.1)
+
+  * Fix order param in update issue method
+
+ -- Vladimir Koljasinskij <smosker@yandex-team.ru>  Thu, 07 Aug 2019 13:06:00 +0300
+
 yandex-tracker-client (1.0)
 
   * Initial release
