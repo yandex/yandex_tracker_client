@@ -1,3 +1,9 @@
+yandex-tracker-client (1.2)
+
+  * COMMONPY-221 fix duplicate issues if error from tracker occurred while creation ticket
+
+ -- Vladimir Koljasinskij <smosker@yandex-team.ru>  Thu, 21 Aug 2019 16:06:00 +0300
+
 yandex-tracker-client (1.1)
 
   * Fix order param in update issue method

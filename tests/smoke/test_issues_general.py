@@ -52,6 +52,7 @@ def test_create_issue(net_mock, client, fake_issue):
     client.issues.create(**test_request)
 
     real_request = net_mock.request_history[0].json()
+    assert real_request.get('unique') is not None
     assert any([real_request[k] == test_request[k] for k in test_request])
 
 

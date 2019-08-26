@@ -5,6 +5,7 @@ import logging
 import os
 import time
 import re
+import uuid
 
 
 from six import iteritems, with_metaclass, string_types
@@ -479,7 +480,7 @@ class Issues(ImportCollectionMixin, Collection):
 
     def create(self, params=None, **kwargs):
         _upload_attachments(self, kwargs)
-
+        self._add_unique(kwargs)
         try:
             return super(Issues, self).create(params=params, **kwargs)
         except exceptions.Conflict as e:
@@ -493,6 +494,10 @@ class Issues(ImportCollectionMixin, Collection):
                 except IndexError:
                     logger.error('Not found the issue by unique "%s"', unique)
             raise e
+
+    def _add_unique(self, kwargs):
+        if 'unique' not in kwargs:
+            kwargs['unique'] = uuid.uuid4().hex
 
     @injected_method
     def update(self, obj, params=None, **kwargs):
