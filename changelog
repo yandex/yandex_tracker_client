@@ -1,3 +1,9 @@
+yandex-tracker-client (1.3)
+
+  * COMMONPY-227 add retry while getting bulkchange status
+
+ -- Vladimir Koljasinskij <smosker@yandex-team.ru>  Thu, 30 Sep 2019 17:49:00 +0300
+
 yandex-tracker-client (1.2)
 
   * COMMONPY-221 fix duplicate issues if error from tracker occurred while creation ticket

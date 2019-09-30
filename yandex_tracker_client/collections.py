@@ -9,6 +9,7 @@ import uuid
 
 
 from six import iteritems, with_metaclass, string_types
+from six.moves import range
 
 from .settings import VERSION_V2
 from .uriutils import Matcher
@@ -1180,7 +1181,14 @@ class BulkChange(Collection):
 
     @injected_method
     def wait(self, bulkchange, interval=1.0):
-        bulkchange = self[bulkchange.id]
+        for _ in range(10):
+            try:
+                bulkchange = self[bulkchange.id]
+            except exceptions.NotFound:
+                logger.warning(
+                    'Not found bulkchange with id: "{}", retrying'.format(bulkchange.id)
+                )
+                time.sleep(interval)
         while bulkchange.status not in ('COMPLETE', 'FAILED'):
             time.sleep(interval)
             bulkchange = self[bulkchange.id]
