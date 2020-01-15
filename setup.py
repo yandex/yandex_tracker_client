@@ -7,7 +7,7 @@ import sys
 from setuptools import setup
 
 if sys.version_info.major < 3:
-    stools = 'setuptools==42.0.2'
+    stools = 'setuptools<=42.0.2'
 else:
     stools = 'setuptools'
 
@@ -24,7 +24,7 @@ def read(fname):
 
 setup(
     name='yandex_tracker_client',
-    version='1.4',
+    version='1.5',
     description='Client for Yandex.Tracker',
     author='Yandex Team',
     author_email='smosker@yandex-team.ru',
