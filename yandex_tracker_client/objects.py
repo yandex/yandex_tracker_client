@@ -39,7 +39,7 @@ class Object(object):
                 return value.as_dict()
 
             elif isinstance(value, (list, set, tuple)):
-                return map(to_simple, value)
+                return [to_simple(v) for v in value]
 
             else:
                 return value
