@@ -1154,10 +1154,12 @@ class BulkChange(Collection):
     }
 
     def update(self, issues, **values):
+        params = values.pop('params', None)
         return self._execute_request(
             self._connection.post,
             path=self.path + '_update',
             data={'issues': issues, 'values': values},
+            params=params,
         )
 
     def transition(self, issues, transition, **values):

@@ -1,3 +1,9 @@
+yandex-tracker-client (1.6)
+
+  * Add support of passing params while making bulkchange
+
+ -- Vladimir Koljasinskij <smosker@yandex-team.ru>  Thu, 28 Feb 2020 14:06:00 +0300
+
 yandex-tracker-client (1.4)
 
   * Python2 support fixed

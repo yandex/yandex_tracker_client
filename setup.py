@@ -24,7 +24,7 @@ def read(fname):
 
 setup(
     name='yandex_tracker_client',
-    version='1.5',
+    version='1.6',
     description='Client for Yandex.Tracker',
     author='Yandex Team',
     author_email='smosker@yandex-team.ru',
