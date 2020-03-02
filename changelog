@@ -1,3 +1,9 @@
+yandex-tracker-client (1.7)
+
+  * Add support of passing list in perform_action
+
+ -- Vladimir Koljasinskij <smosker@yandex-team.ru>  Thu, 02 Mar 2020 17:06:00 +0300
+
 yandex-tracker-client (1.6)
 
   * Add support of passing params while making bulkchange

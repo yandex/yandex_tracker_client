@@ -194,7 +194,7 @@ class Collection(with_metaclass(CollectionMeta, object)):
         )
 
     @injected_method
-    def perform_action(self, obj, action, method, params=None, ignore_empty_body=False, **kwargs):
+    def perform_action(self, obj, action, method, params=None, ignore_empty_body=False, list_data=None, **kwargs):
         ignore_version_change = kwargs.pop('ignore_version_change', False)
         if ignore_version_change:
             version = None
@@ -204,11 +204,16 @@ class Collection(with_metaclass(CollectionMeta, object)):
         if not kwargs and ignore_empty_body:
             kwargs = None
 
+        if list_data:
+            data = list_data
+        else:
+            data = kwargs
+
         return self._execute_request(
             getattr(self._connection, method),
             path=obj._path + '/{}'.format(action),
             version=version,
-            data=kwargs,
+            data=data,
             params=params,
         )
 

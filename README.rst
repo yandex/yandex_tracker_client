@@ -275,7 +275,9 @@ perform_action, usage example:
 
 Some of tracker api endpoints doesn't work correctly with blank (``{}``)
 body, in this case you should pass ``ignore_empty_body=True`` to this
-method
+method.
+If endpoint require list in body use ``list_data`` param
+and just pass needed kwargs otherwise.
 
 Examples
 --------
