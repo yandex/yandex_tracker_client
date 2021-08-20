@@ -739,6 +739,13 @@ class Queues(Collection):
             self._connection.get,
             path=queue._path + '/triggers',
         )
+    
+    @injected_method
+    def check_permissions(self, queue, permission_code):
+        return self._execute_request(
+            self._connection.get,
+            path=queue._path + '/checkPermissions/{}'.format(permission_code),
+        )
 
 
 class QueueDefaultValues(Collection):
