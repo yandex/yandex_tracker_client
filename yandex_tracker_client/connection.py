@@ -195,8 +195,13 @@ def decode_response(response, conn):
     if isinstance(decoded, Reference):
         return Resource(conn, decoded._path, decoded._value)
     elif isinstance(decoded, list):
-        items = [Resource(conn, item._path, item._value)
-                 for item in decoded]
+        items = []
+        for item in decoded:
+            if hasattr(item, '_path') and  hasattr(item, '_value'):
+                r = Resource(conn, item._path, item._value)
+            else:
+                r = item
+            items.append(r)
         if 'next' in response.links:
             params = {
                 'connection': conn,

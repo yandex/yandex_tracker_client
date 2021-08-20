@@ -134,9 +134,13 @@ class Reference(Object):
         if isinstance(display, dict):
             display = display['ru']
 
+        _id = self._value.get('id')
+        if isinstance(_id, int):
+            _id = str(_id)
+
         return '<Reference to {collection}/{id} ({display})>'.format(
             collection=self._collection.__class__.__name__,
-            id=self._value.get('id', '').encode('utf-8'),
+            id=_id.encode('utf-8'),
             display=display.encode('utf-8'),
         )
 

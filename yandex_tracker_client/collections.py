@@ -626,6 +626,21 @@ class Issues(ImportCollectionMixin, Collection):
             path=issue._path + '/permissions',
         )
 
+    @injected_property
+    def checklist_items(self, issue):
+        return self._associated(checklistItems, issue=issue.key)
+
+    @injected_method
+    def add_checklist_item(self, issue, text, checked=False, assignee=None, deadline=None, url=None, item_type=None):
+        return issue.checklist_items.create(
+            text=text,
+            checked=checked,
+            assignee=assignee,
+            deadline=deadline,
+            url=url,
+            item_type=item_type
+        )
+
 
 class Queues(Collection):
     """Extra get params = expand, fields, localized"""
@@ -861,6 +876,11 @@ class Attachments(Collection):
             filename = getattr(file, 'name', None)
 
         if not filename:
+            return DEFAULT_FILENAME
+
+        try:
+            filename.encode('ascii')
+        except UnicodeEncodeError:
             return DEFAULT_FILENAME
 
         return filename.rsplit('/', 1)[-1]
@@ -1260,3 +1280,29 @@ class Filters(Collection):
         'query': None,
         'groupBy': None,
     }
+
+
+class checklistItems(Collection):
+    path = '/{api_version}/issues/{issue}/checklistItems/{id}'
+    fields = {
+        'id': None,
+        'self': None,
+        'text': None,
+        'checked': False,
+        'assignee': None,
+        'deadline': None,
+        'url': None,
+        'checklistItemType': None
+    }
+
+
+    def create(self, text, checked=False, assignee=None, deadline=None, url=None, item_type=None):
+        assert 'issue' in self._vars
+        super(checklistItems, self).create(
+            text=text,
+            checked=checked,
+            assignee=assignee,
+            deadline=deadline,
+            url=url,
+            checklistItemType=item_type
+        )
