@@ -96,3 +96,25 @@ def test_update_issue(net_mock, client, fake_issue):
 
     real_request = net_mock.request_history[1].json()
     assert real_request['summary'] == new_summary
+
+
+def test_issue_local_fields(net_mock, client, fake_issue):
+    net_mock.get(api_url('/issues/{}'.format(fake_issue.key)),
+                 json=fake_issue.json)
+    issue = client.issues[fake_issue.key]
+
+    assert issue.localTestField == "local_field_value"
+
+
+def test_update_local_field_issue(net_mock, client, fake_issue):
+    net_mock.get(api_url('/issues/{}'.format(fake_issue.key)),
+        json=fake_issue.json)
+    net_mock.patch(api_url('/issues/{}'.format(fake_issue.key)),
+                   json=fake_issue.json)
+
+    new_value = 'new_local_field_value'
+    issue = client.issues[fake_issue.key]
+    issue.update(localTestField=new_value)
+
+    real_request = net_mock.request_history[1].json()
+    assert real_request['6063181a59590573909db929--localTestField'] == new_value

@@ -27,7 +27,7 @@ class Object(object):
         logger.debug('%s -> %s', path, self._collection)
         self._connection = connection
         self._path = path
-        self._value = value
+        self._value = self._collection._parse_value(value)
         self._version = value.get('version')
 
     def as_dict(self):

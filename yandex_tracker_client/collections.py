@@ -6,6 +6,7 @@ import os
 import time
 import re
 import uuid
+import six
 
 
 from six import iteritems, with_metaclass, string_types
@@ -80,6 +81,9 @@ class Collection(with_metaclass(CollectionMeta, object)):
     _connection = None
     _vars = None
     _header_param_names = {'x_org_id': 'X-ORG-ID'}
+    _local_fields_map = {}
+    has_local_fields = False
+
 
     def __init__(self, connection, **kwargs):
         self._connection = connection
@@ -105,6 +109,27 @@ class Collection(with_metaclass(CollectionMeta, object)):
     @abc.abstractproperty
     def fields(self):
         pass
+
+
+    def _parse_value(self, value):
+        if self.has_local_fields:
+            local_fields_to_add = {}
+            for field, field_value in six.iteritems(value):
+                if '--' in field:
+                    local_field_key = field.split('--')[-1]
+                    local_fields_to_add[local_field_key] = field_value
+                    self._local_fields_map[local_field_key] = field
+            value.update(local_fields_to_add)
+        return value
+
+    def _process_kwargs(self, kwargs):
+        if self.has_local_fields:
+            for field_value, local_field_value in six.iteritems(self._local_fields_map):
+                if field_value in kwargs:
+                    kwargs[local_field_value] = kwargs.pop(field_value)
+
+        return kwargs
+
 
     def _execute_request(self, method, path, params=None, data=None, files=None, **kwargs):
         url_params, header_params, params = self._extract_params(params)
@@ -164,6 +189,7 @@ class Collection(with_metaclass(CollectionMeta, object)):
     @injected_method
     def update(self, obj, params=None, **kwargs):
         if kwargs:
+            kwargs = self._process_kwargs(kwargs)
             ignore_version_change = kwargs.pop('ignore_version_change', False)
             if ignore_version_change:
                 version = None
@@ -461,6 +487,7 @@ class Issues(ImportCollectionMixin, Collection):
     path = '/{api_version}/issues/{id}'
     search_path = '/{api_version}/issues/_search'
     import_path = '/{api_version}/issues/_import'
+    has_local_fields = True
 
     _fields = None
 

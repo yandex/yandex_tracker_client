@@ -1,3 +1,9 @@
+yandex-tracker-client (2.0)
+
+  * Support for local fields
+
+ -- Vladimir Koljasinskij <smosker@yandex-team.ru>  Wed, 28 Apr 2021 13:44:00 +0300
+
 yandex-tracker-client (1.9)
 
   * Support for unicode file name
