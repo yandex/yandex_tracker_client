@@ -51,7 +51,7 @@ Handling 404 exceptions:
        pass
 
 **Creating issue:**
-
+Full field list `here <https://tech.yandex.com/connect/tracker/api/concepts/issues/create-issue-docpage/>`_.
 .. code:: python
 
    client.issues.create(
