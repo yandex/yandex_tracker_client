@@ -1,3 +1,9 @@
+yandex-tracker-client (2.1)
+
+  * fix case when local field slug == global field slug
+
+ -- Vladimir Koljasinskij <smosker@yandex-team.ru>  Thu, 08 Jul 2021 22:44:00 +0300
+
 yandex-tracker-client (2.0)
 
   * Support for local fields

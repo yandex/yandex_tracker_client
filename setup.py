@@ -24,14 +24,14 @@ def read(fname):
 
 setup(
     name='yandex_tracker_client',
-    version='2.0',
+    version='2.1',
     description='Client for Yandex.Tracker',
     author='Yandex Team',
     author_email='smosker@yandex-team.ru',
     url='https://github.com/yandex/yandex_tracker_client',
     long_description=read('README.rst'),
     packages=['yandex_tracker_client'],
-    classifiers=['Development Status :: 4 - Beta',
+    classifiers=['Development Status :: 5 - Production/Stable',
                  'Intended Audience :: Developers',
                  'License :: OSI Approved :: BSD License',
                  'Operating System :: OS Independent',

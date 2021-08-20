@@ -117,6 +117,8 @@ class Collection(with_metaclass(CollectionMeta, object)):
             for field, field_value in six.iteritems(value):
                 if '--' in field:
                     local_field_key = field.split('--')[-1]
+                    if local_field_key in value:
+                        local_field_key = 'local_{}'.format(local_field_key)
                     local_fields_to_add[local_field_key] = field_value
                     self._local_fields_map[local_field_key] = field
             value.update(local_fields_to_add)
@@ -129,7 +131,6 @@ class Collection(with_metaclass(CollectionMeta, object)):
                     kwargs[local_field_value] = kwargs.pop(field_value)
 
         return kwargs
-
 
     def _execute_request(self, method, path, params=None, data=None, files=None, **kwargs):
         url_params, header_params, params = self._extract_params(params)

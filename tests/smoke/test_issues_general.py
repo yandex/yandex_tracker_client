@@ -104,6 +104,8 @@ def test_issue_local_fields(net_mock, client, fake_issue):
     issue = client.issues[fake_issue.key]
 
     assert issue.localTestField == "local_field_value"
+    assert issue.local_description == "local_description"
+    assert issue.description == "Empty description"
 
 
 def test_update_local_field_issue(net_mock, client, fake_issue):
