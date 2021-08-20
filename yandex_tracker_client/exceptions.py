@@ -82,7 +82,7 @@ class TrackerServerError(TrackerError, IOError):
             lines.append("({}) {}".format(self.status_code, self.reason))
         if self.errors:
             lines.extend(
-                "- {}: {}".format(key, message)
+                u"- {}: {}".format(key, message)
                 for key, message in sorted(self.errors.items())
             )
         if self.error_messages:
