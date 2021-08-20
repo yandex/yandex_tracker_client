@@ -863,11 +863,6 @@ class Attachments(Collection):
         if not filename:
             return DEFAULT_FILENAME
 
-        try:
-            filename.encode('ascii')
-        except UnicodeEncodeError:
-            return DEFAULT_FILENAME
-
         return filename.rsplit('/', 1)[-1]
 
     @injected_method

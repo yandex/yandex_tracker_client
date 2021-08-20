@@ -1,3 +1,9 @@
+yandex-tracker-client (1.9)
+
+  * Support for unicode file name
+
+ -- Vladimir Koljasinskij <smosker@yandex-team.ru>  Tue, 11 Nov 2020 10:44:00 +0300
+
 yandex-tracker-client (1.8)
 
   * Fix bug with unicodedecode error on python2 when parsing errors
