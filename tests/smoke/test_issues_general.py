@@ -58,7 +58,10 @@ def test_create_issue(net_mock, client, fake_issue):
 
 def test_create_issue_with_conflict(net_mock, client, fake_issue):
     net_mock.post(api_url('/issues/'), status_code=409)
-    net_mock.get(api_url('/issues/'), json=[fake_issue.json])
+    net_mock.post(
+        api_url('/issues/_findByUnique?unique={}'.format(fake_issue.json['unique'])),
+        json=fake_issue.json
+    )
 
     test_request = {
         'unique': fake_issue.json['unique'],
@@ -72,7 +75,10 @@ def test_create_issue_with_conflict(net_mock, client, fake_issue):
 
 def test_create_issue_with_conflict_not_found(net_mock, client, fake_issue):
     net_mock.post(api_url('/issues/'), status_code=409)
-    net_mock.get(api_url('/issues/'), json=[])
+    net_mock.post(
+        api_url('/issues/_findByUnique?unique={}'.format(fake_issue.json['unique'])),
+        status_code=404,
+    )
 
     test_request = {
         'unique': fake_issue.json['unique'],

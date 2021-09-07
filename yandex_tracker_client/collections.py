@@ -488,6 +488,7 @@ class Issues(ImportCollectionMixin, Collection):
     path = '/{api_version}/issues/{id}'
     search_path = '/{api_version}/issues/_search'
     import_path = '/{api_version}/issues/_import'
+    unique_path = '/{api_version}/issues/_findByUnique'
     has_local_fields = True
 
     _fields = None
@@ -524,8 +525,12 @@ class Issues(ImportCollectionMixin, Collection):
             unique = kwargs.get('unique')
             if unique is not None:
                 try:
-                    return list(self.get_all(filter='unique:' + unique))[0]
-                except IndexError:
+                    return self._execute_request(
+                        self._connection.post,
+                        path=self.unique_path,
+                        params={'unique': unique},
+                    )
+                except exceptions.NotFound:
                     logger.error('Not found the issue by unique "%s"', unique)
             raise e
 
@@ -739,7 +744,7 @@ class Queues(Collection):
             self._connection.get,
             path=queue._path + '/triggers',
         )
-    
+
     @injected_method
     def check_permissions(self, queue, permission_code):
         return self._execute_request(
