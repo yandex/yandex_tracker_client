@@ -490,6 +490,7 @@ class Issues(ImportCollectionMixin, Collection):
     import_path = '/{api_version}/issues/_import'
     unique_path = '/{api_version}/issues/_findByUnique'
     has_local_fields = True
+    date_format = '%Y-%m-%dT%H:%M:%S.%f%z'
 
     _fields = None
 
