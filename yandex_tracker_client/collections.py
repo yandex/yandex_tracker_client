@@ -1113,6 +1113,9 @@ class Workflows(Collection):
         'self': None,
         'version': None,
         'xml': None,
+        'name': None,
+        'steps': [],
+        'initialAction': None,
     }
 
 
