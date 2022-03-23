@@ -1027,18 +1027,11 @@ class Worklog(Collection):
         )
 
 
-class IssueWorklog(Collection):
+class IssueWorklog(Collection, ImportCollectionMixin):
     path = '/{api_version}/issues/{issue}/worklog/{id}'
+    import_path = '/{api_version}/issues/{issue}/worklogs/_import'
     fields = Worklog.fields
     _priority = 1
-
-    def create(self, start, duration, comment=None):
-        assert 'issue' in self._vars
-        super(IssueWorklog, self).create(
-            start=start,
-            duration=duration,
-            comment=comment
-        )
 
 
 class LinkTypes(Collection):
