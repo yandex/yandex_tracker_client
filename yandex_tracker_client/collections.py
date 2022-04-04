@@ -746,6 +746,13 @@ class Queues(Collection):
             path=queue._path + '/triggers',
         )
 
+    @injected_property
+    def macros(self, queue):
+        return self._execute_request(
+            self._connection.get,
+            path=queue._path + '/macros',
+        )
+
     @injected_method
     def check_permissions(self, queue, permission_code):
         return self._execute_request(
@@ -785,6 +792,19 @@ class Triggers(Collection):
         'actions': [],
         'conditions': [],
         'active': None,
+    }
+    _priority = 1
+
+
+class Macros(Collection):
+    path = '/{api_version}/queues/{queue}/macros/{id}'
+    fields = {
+        'id': None,
+        'self': None,
+        'queue': None,
+        'name': None,
+        'body': None,
+        'fieldChanges': None,
     }
     _priority = 1
 

@@ -1,3 +1,9 @@
+yandex-tracker-client (2.3)
+
+  * OK-1090 Macros collection
+
+ -- Kirill Kartashov <qazaq@yandex-team.ru>  Fri, 01 Apr 2022 21:20:00 +0300
+
 yandex-tracker-client (2.2)
 
   * COMMONPY-297 change api for getting issue by unique
