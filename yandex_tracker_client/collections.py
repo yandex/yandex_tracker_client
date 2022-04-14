@@ -1075,6 +1075,7 @@ class Fields(Collection):
         'readonly': None,
         'options': None,
         'suggest': None,
+        'optionsProvider': None,
     }
 
 
