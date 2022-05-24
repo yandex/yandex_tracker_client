@@ -145,7 +145,7 @@ or:
 .. code:: python
 
    issue = client.issues['MYQUEUE-42']
-   client.attachments.create('path/to/file')
+   issue.attachments.create('path/to/file')
 
 **Deleting an attachment**
 
@@ -161,7 +161,7 @@ or
 
 .. code:: python
 
-   client.attachments[42].delete()
+   issue.attachments[42].delete()
 
 **List issue comments:**
 
