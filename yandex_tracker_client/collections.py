@@ -940,7 +940,7 @@ class Attachments(Collection):
             return DEFAULT_FILENAME
 
         try:
-            filename.encode('ascii')
+            filename.encode('utf-8')
         except UnicodeEncodeError:
             return DEFAULT_FILENAME
 
