@@ -753,6 +753,13 @@ class Queues(Collection):
             path=queue._path + '/macros',
         )
 
+    @injected_property
+    def workflows(self, queue):
+        return self._execute_request(
+            self._connection.get,
+            path=queue._path + '/workflows',
+        )
+
     @injected_method
     def check_permissions(self, queue, permission_code):
         return self._execute_request(

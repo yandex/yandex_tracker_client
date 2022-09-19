@@ -1,3 +1,9 @@
+yandex-tracker-client (2.4)
+
+  * add workflows property to queue objects
+
+ -- Dmitry Kopylov <dmitko@yandex-team.ru>  Wed, 13 Sep 2022 23:00:00 +0300
+
 yandex-tracker-client (2.3)
 
   * OK-1090 Macros collection
