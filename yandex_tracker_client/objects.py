@@ -58,7 +58,8 @@ class Resource(Object):
 
     def __dir__(self):
         return sorted(
-            set(self._collection.fields.keys())
+            set(self._collection.local_fields.keys())
+            | set(self._collection.fields.keys())
             | set(self._collection._injected_properties)
             | set(self._collection._injected_methods)
         )

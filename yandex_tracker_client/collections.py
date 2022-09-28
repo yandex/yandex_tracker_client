@@ -110,6 +110,9 @@ class Collection(with_metaclass(CollectionMeta, object)):
     def fields(self):
         pass
 
+    @property
+    def local_fields(self):
+        return self._local_fields_map
 
     def _parse_value(self, value):
         if self.has_local_fields:
