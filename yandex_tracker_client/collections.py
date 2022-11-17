@@ -490,6 +490,7 @@ class Issues(ImportCollectionMixin, Collection):
     """
     path = '/{api_version}/issues/{id}'
     search_path = '/{api_version}/issues/_search'
+    count_search_path = '/{api_version}/issues/_count'
     import_path = '/{api_version}/issues/_import'
     unique_path = '/{api_version}/issues/_findByUnique'
     has_local_fields = True
@@ -547,7 +548,8 @@ class Issues(ImportCollectionMixin, Collection):
         _upload_attachments(self, kwargs)
         return super(Issues, self).update(obj, params=params, **kwargs)
 
-    def find(self, query=None, per_page=None, keys=None, filter=None, filter_id=None, order=None, **kwargs):
+    def find(self, query=None, per_page=None, keys=None, filter=None, filter_id=None, order=None,
+             count_only=False, **kwargs):
         """
         Parameters 'orderBy' and 'orderAsc' are deprecated in this method.
         Instead use the parameter 'order' in the form of the fields list
@@ -565,9 +567,10 @@ class Issues(ImportCollectionMixin, Collection):
                 order or [],
             ),
         }
+        path = self.count_search_path if count_only else self.search_path
         return self._execute_request(
             self._connection.post,
-            path=self.search_path,
+            path=path,
             params=dict(kwargs, perPage=per_page),
             data=data,
         )
