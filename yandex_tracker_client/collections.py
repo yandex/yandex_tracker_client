@@ -858,6 +858,7 @@ class IssueComments(ImportCollectionMixin, Collection):
         'updatedAt': None,
         'summonees': [],
         'email': None,
+        'reactionsCount': None,
     }
     _priority = 1
 
