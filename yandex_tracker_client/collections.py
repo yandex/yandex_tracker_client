@@ -773,6 +773,13 @@ class Queues(Collection):
             path=queue._path + '/checkPermissions/{}'.format(permission_code),
         )
 
+    @injected_property
+    def local_fields(self, queue):
+        return self._execute_request(
+            self._connection.get,
+            path=queue._path + '/localFields',
+        )
+
 
 class QueueDefaultValues(Collection):
     """Extra get params = localized"""
@@ -1378,3 +1385,20 @@ class checklistItems(Collection):
             url=url,
             checklistItemType=item_type
         )
+
+
+class LocalFields(Collection):
+    path = '/{api_version}/localFields/{id}'
+    fields = {
+        'id': None,
+        'self': None,
+        'name': None,
+        'key': None,
+        'version': None,
+        'schema': None,
+        'category': None,
+        'readonly': None,
+        'options': None,
+        'suggest': None,
+        'queue': None
+    }
