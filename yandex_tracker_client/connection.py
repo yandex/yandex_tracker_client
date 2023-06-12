@@ -40,6 +40,7 @@ class Connection(object):
                  headers=None,
                  api_version=VERSION_V2,
                  verify=True,
+                 cloud_org_id=None,
                  ):
 
         self.session = requests.Session()
@@ -51,6 +52,11 @@ class Connection(object):
         self.session.headers['Authorization'] = 'OAuth ' + (token or 'not provided')
         self.session.headers['X-Org-Id'] = org_id or 'not provided'
         self.session.headers['Content-Type'] = 'application/json'
+
+        if cloud_org_id:
+            if cloud_org_id and org_id:
+                raise exceptions.TrackerClientError("Use either org_id or cloud_org_id to specify organization")
+            self.session.headers['X-Cloud-Org-Id'] = cloud_org_id
 
         # Check validity headers for requests >= 2.11
         for header in self.session.headers.items():
