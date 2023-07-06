@@ -33,7 +33,7 @@ class Connection(object):
 
     def __init__(self,
                  token,
-                 org_id,
+                 org_id=None,
                  base_url="https://api.tracker.yandex.net",
                  timeout=10,
                  retries=10,
