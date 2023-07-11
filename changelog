@@ -1,3 +1,16 @@
+yandex-tracker-client (2.5)
+
+  * get optionsProvider via api
+  * yandex_tracker_client: fix for non-ascii file names
+  * add workflows property to queue objects
+  * COMMONPY-303 Add issue localFields to __dir__
+  * [yandex_tracker_client] add reactionsCount field fetching for issue comments
+  * TOOLSUP-155511 added local fields for queue
+  * [yandex_tracker_client] ability to pass Cloud Org Id
+  * [yandex_tracker_client] make org_id optional
+
+ -- Vladimir Koljasinskij <smosker@yandex-team.ru>  Thu, 11 Jul 2023 13:41:00 +0300
+
 yandex-tracker-client (2.4)
 
   * add workflows property to queue objects
