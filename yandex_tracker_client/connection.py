@@ -32,7 +32,7 @@ def bind_method(name):
 class Connection(object):
 
     def __init__(self,
-                 token,
+                 token=None,
                  org_id=None,
                  base_url="https://api.tracker.yandex.net",
                  timeout=10,
@@ -41,6 +41,7 @@ class Connection(object):
                  api_version=VERSION_V2,
                  verify=True,
                  cloud_org_id=None,
+                 iam_token=None,
                  ):
 
         self.session = requests.Session()
@@ -57,6 +58,14 @@ class Connection(object):
             if cloud_org_id and org_id:
                 raise exceptions.TrackerClientError("Use either org_id or cloud_org_id to specify organization")
             self.session.headers['X-Cloud-Org-Id'] = cloud_org_id
+
+        if token and iam_token:
+            raise exceptions.TrackerClientError("Use OAuth or IAM token for authorization")
+
+        if iam_token:
+            if not cloud_org_id:
+                raise exceptions.TrackerClientError("IAM token works only with cloud organizations. Use cloud_org_id to specify org id.")
+            self.session.headers['Authorization'] = 'Bearer ' + iam_token
 
         # Check validity headers for requests >= 2.11
         for header in self.session.headers.items():

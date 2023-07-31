@@ -1,7 +1,7 @@
 yandex_tracker_client
 =====================
 
-**yandex_tracker_client** provides python interface to `Yandex.Tracker
+**yandex_tracker_client** provides python interface to `Yandex Tracker
 v2 API <https://tech.yandex.com/connect/tracker/>`_.
 
 Installation
@@ -16,10 +16,11 @@ Installation
 Configuring
 -----------
 
-The Yandex.Tracker API uses the OAuth 2.0 protocol for application
+The Yandex Tracker API uses the OAuth 2.0 protocol for application
 authorization. Applications use the OAuth 2.0 protocol to access Yandex
 services on behalf of a user.
 You can get your token `here <https://tech.yandex.com/connect/tracker/api/concepts/access-docpage/>`_.
+You can also use IAM tokens for Yandex Cloud organizations. Read `here <https://cloud.yandex.com/en/docs/iam/concepts/authorization/iam-token>`_ about IAM tokens.
 
 Usage
 -----
@@ -31,6 +32,13 @@ To use client you need to initialize client first:
    from yandex_tracker_client import TrackerClient
 
    client = TrackerClient(token=<token>, org_id=<org_id>)
+
+For Yandex Cloud organizations you need to use cloud_org_id instead of org_id parameter. Use iam_token parameter for temporary IAM tokens.
+
+.. code:: python
+   from yandex_tracker_client import TrackerClient
+   client = TrackerClient(iam_token=<token>, cloud_org_id=<org_id>)
+
 
 **Getting issue:**
 
@@ -66,7 +74,7 @@ Full field list `here <https://tech.yandex.com/connect/tracker/api/concepts/issu
 .. code:: python
 
    issue = client.issues['MYQUEUE-42']
-   issue.update(summary='East or west, Yandex.Tracker is the best', priority='minor')
+   issue.update(summary='East or west, Yandex Tracker is the best', priority='minor')
 
 **Searching for issues:**
 
@@ -292,10 +300,10 @@ Examples
 
    def sent_employee_to_vacation(assignee, replace_with):
        """
-       :param assignee: login in Yandex.Tracker
+       :param assignee: login in Yandex Tracker
        :type assignee: ``str``
 
-       :param replace_with: login in Yandex.Tracker
+       :param replace_with: login in Yandex Tracker
        :type replace_with: ``str``
 
        :return: is operation was successful
