@@ -33,10 +33,12 @@ To use client you need to initialize client first:
 
    client = TrackerClient(token=<token>, org_id=<org_id>)
 
-For Yandex Cloud organizations you need to use cloud_org_id instead of org_id parameter. Use iam_token parameter for temporary IAM tokens.
+For Yandex Cloud organizations you need to use `cloud_org_id` instead of `org_id` parameter. Use `iam_token` parameter for temporary IAM tokens.
 
 .. code:: python
+
    from yandex_tracker_client import TrackerClient
+
    client = TrackerClient(iam_token=<token>, cloud_org_id=<org_id>)
 
 
@@ -60,6 +62,7 @@ Handling 404 exceptions:
 
 **Creating issue:**
 Full field list `here <https://tech.yandex.com/connect/tracker/api/concepts/issues/create-issue-docpage/>`_.
+
 .. code:: python
 
    client.issues.create(
