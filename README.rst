@@ -237,6 +237,25 @@ or
    issue = client.issues['MYQUEUE-42']
    link = issue.remotelinks.create(origin="ru.yandex.lunapark", key="MYQUEUE-42", relationship="relates")
 
+**List custom field's values:**
+
+.. code:: python
+
+   field = client.fields.get("custom_branch")
+   for value in field.optionsProvider["values"]:
+      print(value)
+
+**Update custom field's values:**
+
+.. code:: python
+
+   field = client.fields.get("custom_branch")
+   options = {
+      "type": field.optionsProvider["type"],
+      "values": ["First", "Second", "Third"],
+   }
+   field.update(optionsProvider=options)
+
 Advanced Usage
 --------------
 
@@ -367,4 +386,3 @@ Run tests
 ::
 
    ./run_tests.sh
-
