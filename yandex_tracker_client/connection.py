@@ -3,6 +3,7 @@
 import logging
 import requests
 import json
+import time
 
 try:
     from requests.utils import check_header_validity
@@ -37,6 +38,8 @@ class Connection(object):
                  base_url="https://api.tracker.yandex.net",
                  timeout=10,
                  retries=10,
+                 retries_initial_delay=0,
+                 retries_delay_multiplier=1,
                  headers=None,
                  api_version=VERSION_V2,
                  verify=True,
@@ -75,6 +78,8 @@ class Connection(object):
         self.api_version = api_version
         self.timeout = timeout
         self.retries = retries
+        self.retries_initial_delay = retries_initial_delay
+        self.retries_delay_multiplier = retries_delay_multiplier
 
     get = bind_method('GET')
     put = bind_method('PUT')
@@ -149,6 +154,8 @@ class Connection(object):
         exception = None
         iterations = max(self.retries + 1, 1)
 
+        delay_before_extra_request_attempt = self.retries_initial_delay
+
         for retry in range(iterations):
             try:
                 response = self.session.request(**kwargs)
@@ -164,7 +171,9 @@ class Connection(object):
                     self._log_error(logging.WARNING, response)
                 else:
                     break
-            # XXX: sleep?
+            if delay_before_extra_request_attempt > 0:
+                time.sleep(delay_before_extra_request_attempt)
+            delay_before_extra_request_attempt *= self.retries_delay_multiplier
 
         if exception is not None:
             raise exceptions.TrackerRequestError(exception)
