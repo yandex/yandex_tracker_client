@@ -40,6 +40,7 @@ class Connection(object):
                  retries=10,
                  retries_initial_delay=0,
                  retries_delay_multiplier=1,
+                 retries_delay_upper_limit=0,
                  headers=None,
                  api_version=VERSION_V2,
                  verify=True,
@@ -80,6 +81,7 @@ class Connection(object):
         self.retries = retries
         self.retries_initial_delay = retries_initial_delay
         self.retries_delay_multiplier = retries_delay_multiplier
+        self.retries_delay_upper_limit = retries_delay_upper_limit
 
     get = bind_method('GET')
     put = bind_method('PUT')
@@ -154,7 +156,9 @@ class Connection(object):
         exception = None
         iterations = max(self.retries + 1, 1)
 
-        delay_before_extra_request_attempt = self.retries_initial_delay
+        retry_delay = self.retries_initial_delay
+        multiplier = self.retries_delay_multiplier
+        limit = self.retries_delay_upper_limit
 
         for retry in range(iterations):
             try:
@@ -163,7 +167,7 @@ class Connection(object):
                 exception = e
             else:
                 exception = None
-                if 500 <= response.status_code < 600:
+                if 500 <= response.status_code < 600 or response.status_code == 429 and retry_delay > 0:
                     logger.warning(
                         "Request failed with status %d, retrying (%d)...",
                         response.status_code, retry
@@ -171,9 +175,14 @@ class Connection(object):
                     self._log_error(logging.WARNING, response)
                 else:
                     break
-            if delay_before_extra_request_attempt > 0:
-                time.sleep(delay_before_extra_request_attempt)
-            delay_before_extra_request_attempt *= self.retries_delay_multiplier
+
+            if retry_delay > 0:
+                time.sleep(retry_delay)
+
+            if multiplier > 1:
+                retry_delay *= multiplier
+            if 0 < limit < retry_delay:
+                retry_delay = limit
 
         if exception is not None:
             raise exceptions.TrackerRequestError(exception)
