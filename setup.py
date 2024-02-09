@@ -6,11 +6,6 @@ import sys
 
 from setuptools import setup
 
-if sys.version_info.major < 3:
-    stools = 'setuptools<=42.0.2'
-else:
-    stools = 'setuptools'
-
 # Utility function to read the README file.
 # Used for the long_description.  It's nice, because now 1) we have a top level
 # README file and 2) it's easier to type in the README file than to put a raw
@@ -44,7 +39,8 @@ setup(
     python_requires='>=2.7',
     install_requires=[
         'requests[security]>=2.0',
-        stools,
+        'setuptools<=42.0.2; python_version <= "2.7"',
+        'setuptools; python_version >= "3.4"',
         'six>=1.9',
     ]
 )
