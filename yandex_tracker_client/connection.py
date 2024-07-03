@@ -1,9 +1,10 @@
 # coding: utf-8
 
-import logging
-import requests
 import json
+import logging
 import time
+
+import requests
 
 try:
     from requests.utils import check_header_validity
@@ -226,11 +227,13 @@ def decode_response(response, conn):
     decoded = response.json(object_hook=decode_object)
 
     if isinstance(decoded, Reference):
-        return Resource(conn, decoded._path, decoded._value)
+        return decoded.copy_into(conn, Resource)
     elif isinstance(decoded, list):
         items = []
         for item in decoded:
-            if hasattr(item, '_path') and  hasattr(item, '_value'):
+            if hasattr(item, '_path') and hasattr(item, '_value') and hasattr(item, '_local_fields_map'):
+                r = Resource(conn, item._path, item._value, item._local_fields_map)
+            elif hasattr(item, '_path') and hasattr(item, '_value'):
                 r = Resource(conn, item._path, item._value)
             else:
                 r = item

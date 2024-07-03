@@ -1,9 +1,9 @@
 # coding: utf-8
 
 import pytest
+from common.url import api_url
 
 from yandex_tracker_client import exceptions
-from common.url import api_url
 
 
 @pytest.mark.parametrize('issue_field', ['key', 'version', 'summary',
@@ -109,8 +109,8 @@ def test_issue_local_fields(net_mock, client, fake_issue):
                  json=fake_issue.json)
     issue = client.issues[fake_issue.key]
 
-    assert issue.localTestField == "local_field_value"
-    assert issue.local_description == "local_description"
+    assert issue['6063181a59590573909db929--localTestField'] == "local_field_value"
+    assert issue['6063181a59590573909db940--description'] == "local_description"
     assert issue.description == "Empty description"
 
 
@@ -120,9 +120,15 @@ def test_update_local_field_issue(net_mock, client, fake_issue):
     net_mock.patch(api_url('/issues/{}'.format(fake_issue.key)),
                    json=fake_issue.json)
 
-    new_value = 'new_local_field_value'
+    new_local_value = 'new_local_field_value'
+    new_custom_value = 'new_custom_field_value'
     issue = client.issues[fake_issue.key]
-    issue.update(localTestField=new_value)
+    issue.update(**{
+        '6063181a59590573909db929--localTestField': new_local_value,
+        'customField': new_custom_value
+    })
 
     real_request = net_mock.request_history[1].json()
-    assert real_request['6063181a59590573909db929--localTestField'] == new_value
+    assert real_request['6063181a59590573909db929--localTestField'] == new_local_value
+    assert '6063181a59590573909db929--customField' not in real_request
+    assert real_request['customField'] == new_custom_value

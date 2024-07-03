@@ -205,6 +205,7 @@ class FakeIssue(FakeObject):
             },
             "createdAt": "2015-04-05T12:20:04.022+0000",
             "updatedAt": "2015-04-05T12:20:04.022+0000",
+            "6063181a59590573909db929--customField": "local_custom_value",
             "6063181a59590573909db929--localTestField": "local_field_value",
             "6063181a59590573909db940--description": "local_description",
             "createdBy": {
