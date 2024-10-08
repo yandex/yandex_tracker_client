@@ -168,7 +168,7 @@ class Connection(object):
                 exception = e
             else:
                 exception = None
-                if 500 <= response.status_code < 600 or response.status_code == 429 and retry_delay > 0:
+                if 500 <= response.status_code < 600 or response.status_code in {429, 409} and retry_delay > 0:
                     logger.warning(
                         "Request failed with status %d, retrying (%d)...",
                         response.status_code, retry
