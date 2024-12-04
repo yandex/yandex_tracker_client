@@ -1257,7 +1257,7 @@ class BulkChange(Collection):
             data={'transition': transition, 'issues': issues, 'values': values},
         )
 
-    def move(self, issues, queue, move_all_fields=False, **values):
+    def move(self, issues, queue, move_all_fields=False, move_to_initial_status=False, **values):
         return self._execute_request(
             self._connection.post,
             path=self.path + '_move',
@@ -1266,6 +1266,7 @@ class BulkChange(Collection):
                 'issues': issues,
                 'values': values,
                 'moveAllFields': move_all_fields,
+                'initialStatus': move_to_initial_status,
             },
         )
 
