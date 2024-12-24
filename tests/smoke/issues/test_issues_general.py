@@ -15,13 +15,13 @@ def test_issue_fields(net_mock, client, fake_issue, issue_field):
                  json=fake_issue.json)
     issue = client.issues[fake_issue.key]
 
-    #expected
+    # expected
     expected_value = (
         fake_issue.json[issue_field]['display']
         if isinstance(fake_issue.json[issue_field], dict)
         else fake_issue.json[issue_field])
 
-    #current
+    # current
     current_field = getattr(issue, issue_field)
     current_value = (
         current_field.display if hasattr(current_field, 'display')
@@ -53,7 +53,7 @@ def test_create_issue(net_mock, client, fake_issue):
 
     real_request = net_mock.request_history[0].json()
     assert real_request.get('unique') is not None
-    assert any([real_request[k] == test_request[k] for k in test_request])
+    assert all([real_request[k] == test_request[k] for k in test_request])
 
 
 def test_create_issue_with_conflict(net_mock, client, fake_issue):
@@ -92,7 +92,7 @@ def test_create_issue_with_conflict_not_found(net_mock, client, fake_issue):
 
 def test_update_issue(net_mock, client, fake_issue):
     net_mock.get(api_url('/issues/{}'.format(fake_issue.key)),
-        json=fake_issue.json)
+                 json=fake_issue.json)
     net_mock.patch(api_url('/issues/{}'.format(fake_issue.key)),
                    json=fake_issue.json)
 
@@ -116,7 +116,7 @@ def test_issue_local_fields(net_mock, client, fake_issue):
 
 def test_update_local_field_issue(net_mock, client, fake_issue):
     net_mock.get(api_url('/issues/{}'.format(fake_issue.key)),
-        json=fake_issue.json)
+                 json=fake_issue.json)
     net_mock.patch(api_url('/issues/{}'.format(fake_issue.key)),
                    json=fake_issue.json)
 
@@ -130,5 +130,5 @@ def test_update_local_field_issue(net_mock, client, fake_issue):
 
     real_request = net_mock.request_history[1].json()
     assert real_request['6063181a59590573909db929--localTestField'] == new_local_value
-    assert '6063181a59590573909db929--customField' not in real_request
+    assert '6063181a59590573909db929--customField' not in real_request  # The expected logic will be implemented in the future
     assert real_request['customField'] == new_custom_value

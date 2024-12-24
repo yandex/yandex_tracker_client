@@ -3,19 +3,16 @@
 import abc
 import logging
 import os
-import time
 import re
+import time
 import uuid
-import six
-
 
 from six import iteritems, with_metaclass, string_types
 from six.moves import range
 
+from . import exceptions
 from .settings import VERSION_V2
 from .uriutils import Matcher
-from . import exceptions
-
 
 logger = logging.getLogger(__name__)
 
@@ -84,7 +81,6 @@ class Collection(with_metaclass(CollectionMeta, object)):
     _read_local_field = None
     _updated_local_field = None
     has_local_fields = False
-
 
     def __init__(self, connection, **kwargs):
         self._connection = connection
@@ -1364,7 +1360,6 @@ class checklistItems(Collection):
         'checklistItemType': None
     }
 
-
     def create(self, text, checked=False, assignee=None, deadline=None, url=None, item_type=None):
         assert 'issue' in self._vars
         super(checklistItems, self).create(
@@ -1392,3 +1387,210 @@ class LocalFields(Collection):
         'suggest': None,
         'queue': None
     }
+
+
+class EntityComments(Collection):
+    path = '/v2/entities/{entity}/{idx}/comments'
+    fields = IssueComments.fields
+
+    _priority = 1
+
+    def create(self, params=None, **kwargs):
+        _upload_attachments(self, kwargs)
+        return super(EntityComments, self).create(params=params, **kwargs)
+
+    @injected_method
+    def update(self, obj, **kwargs):
+        _upload_attachments(self, kwargs)
+        return super(EntityComments, self).update(obj, **kwargs)
+
+
+class EntityChecklistItems(Collection):
+    path = '/v2/entities/{entity}/{idx}/checklistItems'
+    fields = checklistItems.fields
+
+    def create(self, text, checked=False, assignee=None, deadline=None):
+        return super(EntityChecklistItems, self).create(
+            text=text,
+            checked=checked,
+            assignee=assignee,
+            deadline=deadline,
+        )
+
+    def update(self, data):
+        return self._execute_request(
+            self._connection.patch,
+            path=self.path,
+            data=data
+        )
+
+    def delete(self):
+        return self._execute_request(
+            self._connection.delete,
+            path=self.path
+        )
+
+    def move_item(self, item_id, before):
+        return self._execute_request(
+            self._connection.post,
+            path=self.path + "/{}/_move".format(item_id),
+            data={'before': before}
+        )
+
+    def delete_item(self, item_id):
+        return self._execute_request(
+            self._connection.delete,
+            path=self.path + "/{}".format(item_id)
+        )
+
+
+class EntityAttachments(Collection):
+    path = '/v2/entities/{entity}/{idx}/attachments'
+    fields = Attachments.fields
+
+    def attach(self, file_id, notify=None, notify_author=None, fields=None, expand=None):
+        params = {
+            'notify': notify,
+            'notifyAuthor': notify_author,
+            'fields': fields,
+            'expand': expand,
+        }
+        return self._execute_request(
+            self._connection.post,
+            path=self.path + "/{}".format(file_id),
+            params=params
+        )
+
+    def delete(self, file_id):
+        return self._execute_request(
+            self._connection.delete,
+            path=self.path + "/{}".format(file_id),
+        )
+
+    def create(self):
+        raise NotImplementedError
+
+    def update(self):
+        raise NotImplementedError
+
+
+class EntityLinks(Collection):
+    path = '/v2/entities/{entity}/{idx}/links'
+    fields = Links.fields
+    _priority = 1
+
+    def create(self, relationship, entity, params=None, **kwargs):
+        assert 'entity' in self._vars
+        return super(EntityLinks, self).create(
+            relationship=relationship,
+            entity=entity,
+            params=params,
+            **kwargs
+        )
+
+    def delete(self, right):
+        return self._execute_request(
+            self._connection.delete,
+            path=self.path,
+            params=dict(right=right),
+        )
+
+
+class Entity(Collection):
+    """Extra get params:
+        fields,
+        expand,
+        perPage,
+        from,
+        selected,
+        newEventsOnTop,
+        direction,
+    """
+    path = 'pass'
+
+    fields = {
+        'id': None,
+        'self': None,
+        'version': None,
+        'shortId': None,
+        'entityType': None,
+        'createdBy': None,
+        'createdAt': None,
+        'updatedAt': None,
+        'attachments': [],
+    }
+
+    @staticmethod
+    def _get_path_by_entity(entity):
+        return '/v2/entities/{entity}/{{id}}'.format(entity=entity)
+
+    def find(self, search_string=None, filter=None, order_by=None, order_asc=None, root_only=None, per_page=None,
+             page=None, fields=None, **kwargs):
+        data = {
+            'input': search_string,
+            'filter': filter,
+            'orderBy': order_by,
+            'orderAsc': order_asc,
+            'rootOnly': root_only,
+        }
+        return self._execute_request(
+            self._connection.post,
+            path=self.path + '_search',
+            params=dict(kwargs, perPage=per_page, page=page, fields=fields),
+            data=data,
+        )
+
+    def bulk_update(self, meta_entities, values):
+        data = {'metaEntities': meta_entities, 'values': values}
+        return self._execute_request(
+            self._connection.post,
+            path=self.path + 'bulkchange/_update',
+            data=data,
+        )
+
+    @injected_method
+    def get_event_history(self, entity, per_page=None, event_from=None, selected=None, new_events_on_top=None,
+                          direction=None):
+        params = {
+            "perPage": per_page,
+            "from": event_from,
+            "selected": selected,
+            "newEventsOnTop": new_events_on_top,
+            "direction": direction
+        }
+        return self._execute_request(
+            self._connection.get,
+            path=self.path + '{idx}/events/_relative'.format(idx=entity.id),
+            params=params
+        )
+
+    @injected_property
+    def comments(self, entity):
+        return self._associated(EntityComments, entity=self.entity, idx=entity.id)
+
+    @injected_property
+    def checklist_items(self, entity):
+        return self._associated(EntityChecklistItems, entity=self.entity, idx=entity.id)
+
+    @injected_property
+    def attachments(self, entity):
+        return self._associated(EntityAttachments, entity=self.entity, idx=entity.id)
+
+    @injected_property
+    def links(self, entity):
+        return self._associated(EntityLinks, entity=self.entity, idx=entity.id)
+
+
+class Project(Entity):
+    entity = 'project'
+    path = Entity._get_path_by_entity(entity)
+
+
+class Portfolio(Entity):
+    entity = 'portfolio'
+    path = Entity._get_path_by_entity(entity)
+
+
+class Goal(Entity):
+    entity = 'goal'
+    path = Entity._get_path_by_entity(entity)

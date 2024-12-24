@@ -74,6 +74,7 @@ def test_bulkchange_move(net_mock, client, fake_bulkchange):
     real_request = net_mock.request_history[0].json()
     expected_request = {
         'issues': ['TEST-1', 'TEST-2'],
+        'initialStatus': False,
         'queue': 'BROWSER',
         'values': {
             'priority': 'minor',

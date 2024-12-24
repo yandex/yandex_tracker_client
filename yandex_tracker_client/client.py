@@ -46,6 +46,10 @@ class TrackerClient(object):
         self.comment_templates = self._get_collection(collections.CommentTemplates)
         self.filters = self._get_collection(collections.Filters)
         self.workflows = self._get_collection(collections.Workflows)
+        # Entities
+        self.project = self._get_collection(collections.Project)
+        self.portfolio = self._get_collection(collections.Portfolio)
+        self.goal = self._get_collection(collections.Goal)
 
     @property
     def myself(self):

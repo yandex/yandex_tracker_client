@@ -1,15 +1,15 @@
 # coding: utf-8
 
 import pytest
-
-from yandex_tracker_client import TrackerClient
 from mock import mock_open, patch
 
 from common.bulkchange import FakeBulkchange
+from common.entities import FakeEntity, FakeEntitiesCollection
 from common.issues import FakeIssue, FakeIssuesCollection
-from common.queues import FakeQueue, FakeQueuesCollection
 from common.mock import base_mock
+from common.queues import FakeQueue, FakeQueuesCollection
 from common.url import api_url
+from yandex_tracker_client import TrackerClient
 
 
 @pytest.fixture
@@ -69,3 +69,28 @@ def mocked_fake_issue(net_mock, client, fake_issue):
 @pytest.fixture
 def fake_bulkchange():
     return FakeBulkchange()
+
+
+@pytest.fixture(params=['project', 'portfolio', 'goal'])
+def entity_type(request):
+    return request.param
+
+
+@pytest.fixture
+def fake_entity(entity_type):
+    return FakeEntity(entity_type)
+
+
+@pytest.fixture
+def fake_entities(entity_type):
+    return FakeEntitiesCollection(entity_type)
+
+
+@pytest.fixture
+def mocked_fake_entity(request, net_mock, client, fake_entity):
+    net_mock.get(
+        api_url('/entities/{entity_type}/{idx}'.format(entity_type=fake_entity.entity_type, idx=fake_entity.idx)),
+        json=fake_entity.json)
+    entity = getattr(client, fake_entity.entity_type).get(fake_entity.idx)
+
+    return entity

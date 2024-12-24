@@ -16,7 +16,7 @@ def mocked_links(net_mock, mocked_fake_issue, fake_issue):
 
 @pytest.fixture
 def random_link_num(fake_issue):
-    return random.randint(0, len(fake_issue.comments) - 1)
+    return random.randint(0, len(fake_issue.links) - 1)
 
 
 @pytest.fixture
@@ -31,8 +31,7 @@ def mocked_random_link(net_mock, fake_issue, mocked_links, random_link_num):
 
 @pytest.mark.parametrize('link_field', ['direction', 'object', 'updatedBy',
                                         'createdBy', 'createdAt', 'updatedAt'])
-def test_links_fields(fake_issue, link_field, mocked_links, random_link_num):
-
+def test_issues_links_fields(fake_issue, link_field, mocked_links, random_link_num):
     comment = mocked_links[random_link_num]
     fake_link = fake_issue.links[random_link_num]
 
@@ -51,7 +50,7 @@ def test_links_fields(fake_issue, link_field, mocked_links, random_link_num):
     assert current_value == expected_value
 
 
-def test_add_link(net_mock, mocked_fake_issue, fake_issue, mocked_links,
+def test_issues_add_link(net_mock, mocked_fake_issue, fake_issue, mocked_links,
                   random_link_num):
     fake_link = fake_issue.links[random_link_num]
 
@@ -67,11 +66,11 @@ def test_add_link(net_mock, mocked_fake_issue, fake_issue, mocked_links,
 
     real_request = net_mock.request_history[3].json()
 
-    assert any([real_request[k] == post_json[k]
+    assert all([real_request[k] == post_json[k]
                 for k in post_json])
 
 
-def test_link_delete(net_mock, fake_issue, mocked_random_link,
+def test_issues_link_delete(net_mock, fake_issue, mocked_random_link,
                      random_link_num):
     fake_link = fake_issue.links[random_link_num]
     net_mock.delete(api_url('/issues/{}/links/{}'.format(
