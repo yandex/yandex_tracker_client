@@ -10,6 +10,7 @@
   "pytest.ini":"library/python/yandex_tracker_client/pytest.ini",
   "run_tests.sh":"library/python/yandex_tracker_client/run_tests.sh",
   "setup.py":"library/python/yandex_tracker_client/setup.py",
+  "tests/":"library/python/yandex_tracker_client/tests/",
   "tests/common/__init__.py":"library/python/yandex_tracker_client/tests/common/__init__.py",
   "tests/common/backend_responses/fields.json":"library/python/yandex_tracker_client/tests/common/backend_responses/fields.json",
   "tests/common/bulkchange.py":"library/python/yandex_tracker_client/tests/common/bulkchange.py",
