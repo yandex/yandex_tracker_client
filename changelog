@@ -1,3 +1,12 @@
+yandex-tracker-client (2.9)
+
+  * DEVTOOLSSUPPORT-58027: fix opensource email
+  * STARTREK-50809: Add Entity into collections
+  * Add move to Initial status support for bulk move
+  * TRUSTDEVOPS-4384: ретрай в клиенте трекера при 409 ошибке
+
+ -- Max Tyulin <max-tyulin@yandex-team.ru>  Tue, 15 Apr 15 2025 12:57:00 +0300
+
 yandex-tracker-client (2.8)
 
   * STARTREK-43969: yandex_tracker_client: баг при работе с локальными и кастомными полями

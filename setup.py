@@ -19,12 +19,13 @@ def read(fname):
 
 setup(
     name='yandex_tracker_client',
-    version='2.8',
+    version='2.9',
     description='Client for Yandex.Tracker',
     author='Yandex Team',
     author_email='smosker@yandex-team.ru',
     url='https://github.com/yandex/yandex_tracker_client',
     long_description=read('README.rst'),
+    long_description_content_type='text/markdown',
     packages=['yandex_tracker_client'],
     classifiers=['Development Status :: 5 - Production/Stable',
                  'Intended Audience :: Developers',
