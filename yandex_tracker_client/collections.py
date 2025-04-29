@@ -1390,7 +1390,7 @@ class LocalFields(Collection):
 
 
 class EntityComments(Collection):
-    path = '/v2/entities/{entity}/{idx}/comments'
+    path = '/{api_version}/entities/{entity}/{idx}/comments'
     fields = IssueComments.fields
 
     _priority = 1
@@ -1406,7 +1406,7 @@ class EntityComments(Collection):
 
 
 class EntityChecklistItems(Collection):
-    path = '/v2/entities/{entity}/{idx}/checklistItems'
+    path = '/{api_version}/entities/{entity}/{idx}/checklistItems'
     fields = checklistItems.fields
 
     def create(self, text, checked=False, assignee=None, deadline=None):
@@ -1445,7 +1445,7 @@ class EntityChecklistItems(Collection):
 
 
 class EntityAttachments(Collection):
-    path = '/v2/entities/{entity}/{idx}/attachments'
+    path = '/{api_version}/entities/{entity}/{idx}/attachments'
     fields = Attachments.fields
 
     def attach(self, file_id, notify=None, notify_author=None, fields=None, expand=None):
@@ -1475,7 +1475,7 @@ class EntityAttachments(Collection):
 
 
 class EntityLinks(Collection):
-    path = '/v2/entities/{entity}/{idx}/links'
+    path = '/{api_version}/entities/{entity}/{idx}/links'
     fields = Links.fields
     _priority = 1
 
@@ -1522,7 +1522,7 @@ class Entity(Collection):
 
     @staticmethod
     def _get_path_by_entity(entity):
-        return '/v2/entities/{entity}/{{id}}'.format(entity=entity)
+        return '/{{api_version}}/entities/{entity}/{{id}}'.format(entity=entity)
 
     def find(self, search_string=None, filter=None, order_by=None, order_asc=None, root_only=None, per_page=None,
              page=None, fields=None, **kwargs):
