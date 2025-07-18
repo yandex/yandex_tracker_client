@@ -54,3 +54,25 @@ def test_get_all_queues(net_mock, client, fake_queues, queue_field):
 
     assert current_value == expected_value
 
+
+def test_queue_local_field_create(net_mock, client, fake_queue, mocked_fake_queue):
+    data = {
+        "name": {
+            "en": "test_name_en",
+            "ru": "test_name_ru"
+        },
+        "id": "testLocalFieldId",
+        "category": "000000000000000000000001",
+        "type": "ru.yandex.startrek.core.fields.IntegerFieldType",
+    }
+    net_mock.get(
+        api_url('/queues/{queue_id}'.format(queue_id=fake_queue.id)),
+        json=fake_queue.json
+    )
+    net_mock.post(
+        api_url('/queues/{queue_id}/localFields/'.format(queue_id=fake_queue.id)),
+        json=fake_queue.json
+    )
+    mocked_fake_queue.local_fields.create(**data)
+    real_request = net_mock.request_history[1].json()
+    assert real_request == data

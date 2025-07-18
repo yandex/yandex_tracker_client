@@ -760,10 +760,29 @@ class Queues(Collection):
 
     @injected_property
     def local_fields(self, queue):
-        return self._execute_request(
-            self._connection.get,
-            path=queue._path + '/localFields',
-        )
+        return self._associated(QueueLocalFields, queue=queue.key)
+
+
+class QueueLocalFields(Collection):
+    path = '/{api_version}/queues/{queue}/localFields/{id}'
+    fields = {
+        'id': None,
+        'self': None,
+        'name': None,
+        'description': None,
+        'key': None,
+        'version': None,
+        'schema': None,
+        'category': None,
+        'readonly': None,
+        'options': None,
+        'suggest': None,
+        'optionsProvider': None,
+        'queryProvider': None,
+        'order': None,
+        'queue': None,
+        'type': None
+    }
 
 
 class QueueDefaultValues(Collection):
