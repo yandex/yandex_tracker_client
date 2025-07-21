@@ -47,14 +47,6 @@ def fake_queue():
 
 
 @pytest.fixture
-def mocked_fake_queue(net_mock, client, fake_queue):
-    net_mock.get(api_url('/queues/{}'.format(fake_queue.key)),
-                 json=fake_queue.json)
-
-    return client.queues[fake_queue.key]
-
-
-@pytest.fixture
 def fake_queues():
     return FakeQueuesCollection()
 

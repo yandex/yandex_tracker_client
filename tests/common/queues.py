@@ -20,7 +20,7 @@ class FakeQueue(FakeObject):
         self._json = {
             "self": api_url('/queues/' + self.key),
             "id": 786,
-            "key": self.key,
+            "key": "BARAUTO",
             "version": 1412180164560,
             "name": "Test Queue",
             "lead": {
