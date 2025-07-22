@@ -4,6 +4,7 @@ import pytest
 from mock import mock_open, patch
 
 from common.bulkchange import FakeBulkchange
+from common.field_categories import FakeFieldCategory, FakeFieldCategoriesCollection
 from common.entities import FakeEntity, FakeEntitiesCollection
 from common.issues import FakeIssue, FakeIssuesCollection
 from common.mock import base_mock
@@ -94,3 +95,20 @@ def mocked_fake_entity(request, net_mock, client, fake_entity):
     entity = getattr(client, fake_entity.entity_type).get(fake_entity.idx)
 
     return entity
+
+
+@pytest.fixture
+def fake_field_category():
+    return FakeFieldCategory()
+
+
+@pytest.fixture
+def fake_field_categories():
+    return FakeFieldCategoriesCollection()
+
+
+@pytest.fixture
+def mocked_fake_field_categories(net_mock, client, fake_field_categories):
+    net_mock.get(api_url('/fields/categories/'), json=fake_field_categories.json)
+
+    return client.field_categories

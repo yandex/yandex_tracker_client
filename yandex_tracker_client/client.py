@@ -37,6 +37,7 @@ class TrackerClient(object):
         self.components = self._get_collection(collections.Components)
         self.linktypes = self._get_collection(collections.LinkTypes)
         self.fields = self._get_collection(collections.Fields)
+        self.field_categories = self._get_collection(collections.FieldCategories)
         self.screens = self._get_collection(collections.Screens)
         self.worklog = self._get_collection(collections.Worklog)
         self.bulkchange = collections.BulkChange(conn)

@@ -1085,6 +1085,16 @@ class Fields(Collection):
     }
 
 
+class FieldCategories(Collection):
+    path = '/{api_version}/fields/categories/{id}'
+    fields = {
+        'id': None,
+        'self': None,
+        'version': None,
+        'name': None,
+    }
+
+
 class Sprints(Collection):
     path = '/{api_version}/sprints/{id}'
     fields = {
