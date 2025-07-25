@@ -224,7 +224,10 @@ def decode_response(response, conn):
             return Reference(conn, path, obj)
         return obj
 
-    decoded = response.json(object_hook=decode_object)
+    try:
+        decoded = response.json(object_hook=decode_object)
+    except ValueError:
+        raise exceptions.InvalidJSONResponse(response)
 
     if isinstance(decoded, Reference):
         return decoded.copy_into(conn, Resource)

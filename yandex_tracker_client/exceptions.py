@@ -99,6 +99,16 @@ class OutOfRetries(TrackerServerError):
         ))
 
 
+class InvalidJSONResponse(TrackerServerError, ValueError):
+    """Failed to parse JSON from response."""
+
+    def __str__(self):
+        return "\n".join((
+            "Unable to json-decode response.",
+            super(InvalidJSONResponse, self).__str__()
+        ))
+
+
 class BadRequest(TrackerServerError):
     pass
 
