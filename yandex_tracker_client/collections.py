@@ -765,6 +765,27 @@ class Queues(Collection):
             path=queue._path + '/localFields',
         )
 
+    @injected_property
+    def collection(self, queue):
+        class CollectionAccessor:
+            def __init__(self, parent, queue):
+                self._parent = parent
+                self._queue = queue
+
+            @property
+            def triggers(self):
+                return self._parent._associated(Triggers, queue=self._queue.key)
+
+            @property
+            def macros(self):
+                return self._parent._associated(Macros, queue=self._queue.key)
+
+            @property
+            def local_fields(self):
+                return self._parent._associated(QueueLocalFields, queue=self._queue.key)
+
+        return CollectionAccessor(self, queue)
+
 
 class QueueDefaultValues(Collection):
     """Extra get params = localized"""
@@ -784,6 +805,28 @@ class QueueDefaultValues(Collection):
         'updatedAt': None,
     }
     _priority = 1
+
+
+class QueueLocalFields(Collection):
+    path = '/{api_version}/queues/{queue}/localFields/{id}'
+    fields = {
+        'id': None,
+        'self': None,
+        'name': None,
+        'description': None,
+        'key': None,
+        'version': None,
+        'schema': None,
+        'category': None,
+        'readonly': None,
+        'options': None,
+        'suggest': None,
+        'optionsProvider': None,
+        'queryProvider': None,
+        'order': None,
+        'queue': None,
+        'type': None
+    }
 
 
 class Triggers(Collection):

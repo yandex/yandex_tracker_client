@@ -54,3 +54,62 @@ def test_get_all_queues(net_mock, client, fake_queues, queue_field):
 
     assert current_value == expected_value
 
+def test_queue_local_field_create(net_mock, mocked_fake_queue):
+    data = {
+        "name": {
+            "en": "test_name_en",
+            "ru": "test_name_ru"
+        },
+        "id": "testLocalFieldId",
+        "category": "000000000000000000000001",
+        "type": "ru.yandex.startrek.core.fields.IntegerFieldType",
+    }
+    net_mock.post(
+        api_url('/queues/{queue_key}/localFields/'.format(queue_key=mocked_fake_queue.key)),
+    )
+    mocked_fake_queue.collection.local_fields.create(**data)
+    real_request = net_mock.request_history[1].json()
+    assert real_request == data
+
+
+def test_queue_triggers_create(net_mock, mocked_fake_queue):
+    data = {
+        "name": "TriggerName",
+        "actions": [
+            {
+                "type": "Transition",
+                "status": {"key": "open"}
+            }
+        ],
+        "conditions": [
+             {
+                "type": "CommentFullyMatchCondition",
+                "word": "Open"
+             }
+        ]
+    }
+    net_mock.post(
+        api_url('/queues/{queue_key}/triggers/'.format(queue_key=mocked_fake_queue.key)),
+    )
+    mocked_fake_queue.collection.triggers.create(**data)
+    real_request = net_mock.request_history[1].json()
+    assert real_request == data
+
+
+def test_queue_macros_create(net_mock, mocked_fake_queue):
+    data = {
+        "name": "Test macro",
+        "body": "Test comment\n{{currentDateTime}}\n{{issue.author}}",
+        "issueUpdate": [
+            {
+                "field": {"id": "tags"},
+                "update": {"add": ["tag 1", "tag 2"]}
+            }
+        ]
+    }
+    net_mock.post(
+        api_url('/queues/{queue_key}/macros/'.format(queue_key=mocked_fake_queue.key)),
+    )
+    mocked_fake_queue.collection.macros.create(**data)
+    real_request = net_mock.request_history[1].json()
+    assert real_request == data
