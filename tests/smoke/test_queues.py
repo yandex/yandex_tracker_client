@@ -72,6 +72,30 @@ def test_queue_local_field_create(net_mock, mocked_fake_queue):
     assert real_request == data
 
 
+def test_queue_autoactions_create(net_mock, mocked_fake_queue):
+    data = {
+        "name": "Test auto action",
+        "filter": {
+            "priority": ["critical"],
+            "status": ["inProgress"],
+        },
+        "actions": [
+            {
+                "type": "Transition",
+                "status": {
+                    "key": "needInfo"
+                },
+            },
+        ],
+    }
+    net_mock.post(
+        api_url('/queues/{queue_key}/autoactions/'.format(queue_key=mocked_fake_queue.key)),
+    )
+    mocked_fake_queue.collection.macros.create(**data)
+    real_request = net_mock.request_history[1].json()
+    assert real_request == data
+
+
 def test_queue_triggers_create(net_mock, mocked_fake_queue):
     data = {
         "name": "TriggerName",

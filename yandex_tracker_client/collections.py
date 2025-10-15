@@ -773,6 +773,10 @@ class Queues(Collection):
                 self._queue = queue
 
             @property
+            def autoactions(self):
+                return self._parent._associated(AutoActions, queue=self._queue.key)
+
+            @property
             def triggers(self):
                 return self._parent._associated(Triggers, queue=self._queue.key)
 
@@ -827,6 +831,24 @@ class QueueLocalFields(Collection):
         'queue': None,
         'type': None
     }
+
+
+class AutoActions(Collection):
+    path = '/{api_version}/queues/{queue}/autoactions/{id}'
+    fields = {
+        'id': None,
+        'self': None,
+        'version': None,
+        'queue': None,
+        'name': None,
+        'filter': None,
+        'actions': [],
+        'active': None,
+        'enableNotifications': None,
+        'intervalMillis': None,
+        'calendar': None,
+    }
+    _priority = 1
 
 
 class Triggers(Collection):
