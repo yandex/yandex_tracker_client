@@ -842,6 +842,7 @@ class AutoActions(Collection):
         'queue': None,
         'name': None,
         'filter': None,
+        'query': None,
         'actions': [],
         'active': None,
         'enableNotifications': None,
