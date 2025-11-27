@@ -722,6 +722,14 @@ class Queues(Collection):
             path=queue._path + '/permissions',
         )
 
+    @injected_method
+    def update_permissions(self, queue, data):
+        return self._execute_request(
+            self._connection.patch,
+            path=queue._path + '/permissions',
+            data=data,
+        )
+
     @injected_property
     def access(self, queue):
         # XXX: Collection

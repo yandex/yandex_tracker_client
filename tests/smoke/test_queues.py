@@ -158,3 +158,46 @@ def test_queue_macros_create(net_mock, mocked_fake_queue):
     mocked_fake_queue.collection.macros.create(**data)
     real_request = net_mock.request_history[1].json()
     assert real_request == data
+
+
+def test_queue_update_permissions(net_mock, client, mocked_fake_queue):
+    permissions_data = {
+        "create": {
+            "users": ["user1"]
+        },
+        "write": {
+            "users": {
+                "add": ["user2"],
+                "remove": ["user3"]
+            },
+            "groups": {
+                "add": [4]
+            },
+            "roles": {
+                "add": ["author", "assignee"]
+            }
+        },
+        "read": {
+            "groups": {
+                "add": [4]
+            },
+            "roles": {
+                "add": ["follower"]
+            }
+        },
+        "grant": {
+            "users": {
+                "remove": ["username3", "username4"]
+            }
+        }
+    }
+
+    net_mock.patch(
+        api_url('/queues/{}/permissions'.format(mocked_fake_queue.key)),
+        json={"version": 11}
+    )
+
+    client.queues.update_permissions(mocked_fake_queue, permissions_data)
+
+    real_request = net_mock.request_history[1].json()
+    assert real_request == permissions_data
