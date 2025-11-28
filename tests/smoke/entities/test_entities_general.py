@@ -81,3 +81,25 @@ def test_entity_get_event_history(net_mock, client, mocked_fake_entity, fake_ent
     )
     result = mocked_fake_entity.get_event_history()
     assert result == fake_entity.events
+
+
+def test_import_entity(net_mock, client, fake_entity):
+    import_path = '/v2/entities/{entity_type}/_import'.format(entity_type=fake_entity.entity_type)
+    net_mock.post(api_url('/entities/{entity_type}/_import'.format(entity_type=fake_entity.entity_type)),
+                  json=fake_entity.json)
+
+    test_request = {
+        'createdAt': fake_entity.json['createdAt'],
+        'createdBy': fake_entity.json['createdBy'],
+        'summary': fake_entity.json['summary'],
+        'description': fake_entity.json['description'],
+    }
+
+    entity_collection = getattr(client, fake_entity.entity_type)
+    entity_collection.import_object(**test_request)
+    assert net_mock.request_history[0].path == import_path
+    real_request = net_mock.request_history[0].json()
+    assert real_request['createdAt'] == test_request['createdAt']
+    assert real_request['createdBy'] == test_request['createdBy']
+    assert real_request['summary'] == test_request['summary']
+    assert real_request['description'] == test_request['description']

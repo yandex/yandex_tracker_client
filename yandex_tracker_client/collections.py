@@ -1580,7 +1580,7 @@ class EntityLinks(Collection):
         )
 
 
-class Entity(Collection):
+class Entity(ImportCollectionMixin, Collection):
     """Extra get params:
         fields,
         expand,
@@ -1607,6 +1607,10 @@ class Entity(Collection):
     @staticmethod
     def _get_path_by_entity(entity):
         return '/{{api_version}}/entities/{entity}/{{id}}'.format(entity=entity)
+
+    @staticmethod
+    def _get_import_path_by_entity(entity):
+        return '/{{api_version}}/entities/{entity}/_import'.format(entity=entity)
 
     def find(self, search_string=None, filter=None, order_by=None, order_asc=None, root_only=None, per_page=None,
              page=None, fields=None, **kwargs):
@@ -1668,13 +1672,16 @@ class Entity(Collection):
 class Project(Entity):
     entity = 'project'
     path = Entity._get_path_by_entity(entity)
+    import_path = Entity._get_import_path_by_entity(entity)
 
 
 class Portfolio(Entity):
     entity = 'portfolio'
     path = Entity._get_path_by_entity(entity)
+    import_path = Entity._get_import_path_by_entity(entity)
 
 
 class Goal(Entity):
     entity = 'goal'
     path = Entity._get_path_by_entity(entity)
+    import_path = Entity._get_import_path_by_entity(entity)
