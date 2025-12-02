@@ -103,3 +103,43 @@ def test_import_entity(net_mock, client, fake_entity):
     assert real_request['createdBy'] == test_request['createdBy']
     assert real_request['summary'] == test_request['summary']
     assert real_request['description'] == test_request['description']
+
+
+def test_entity_extended_permissions(net_mock, client, mocked_fake_entity, fake_entity):
+    net_mock.get(
+        api_url('/entities/{entity_type}/{idx}/extendedPermissions'.format(
+            entity_type=fake_entity.entity_type,
+            idx=fake_entity.idx
+        )),
+        json=fake_entity.extended_permissions
+    )
+    result = mocked_fake_entity.extended_permissions
+    assert result == fake_entity.extended_permissions
+
+
+def test_entity_update_extended_permissions(net_mock, client, mocked_fake_entity, fake_entity):
+    net_mock.patch(
+        api_url('/entities/{entity_type}/{idx}/extendedPermissions'.format(
+            entity_type=fake_entity.entity_type,
+            idx=fake_entity.idx
+        )),
+        json=fake_entity.extended_permissions
+    )
+
+    new_permissions = {
+        "acl": {
+            "READ": {
+                "users": ["newuser"],
+                "groups": [2],
+            },
+            "GRANT": {
+                "groups": [2],
+                "roles": ["OWNER"],
+            },
+        },
+        "permissionSources": [999],
+    }
+    mocked_fake_entity.update_extended_permissions(data=new_permissions)
+
+    real_request = net_mock.request_history[1].json()
+    assert real_request == new_permissions

@@ -172,6 +172,30 @@ class FakeEntity(FakeObject):
             }
         return self._events
 
+    @property
+    def extended_permissions(self):
+        return {
+            "acl": {
+                "READ": {
+                    "users": ["username"],
+                    "groups": [1],
+                },
+                "GRANT": {
+                    "groups": [1],
+                    "roles": ["AUTHOR"],
+                },
+                "WRITE": {
+                    "groups": [1],
+                    "roles": ["AUTHOR", "FOLLOWER"],
+                },
+            },
+            "permissionSources": [123],
+            "parentEntities": {
+                "primary": 123,
+                "secondary": [456, 789],
+            },
+        }
+
     def __init__(self, entity_type, idx=None):
         self.entity_type = entity_type
         self.idx = 123

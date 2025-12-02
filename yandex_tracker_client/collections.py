@@ -1668,6 +1668,21 @@ class Entity(ImportCollectionMixin, Collection):
     def links(self, entity):
         return self._associated(EntityLinks, entity=self.entity, idx=entity.id)
 
+    @injected_property
+    def extended_permissions(self, entity):
+        return self._execute_request(
+            self._connection.get,
+            path=self.path + '{idx}/extendedPermissions'.format(idx=entity.id),
+        )
+
+    @injected_method
+    def update_extended_permissions(self, entity, data):
+        return self._execute_request(
+            self._connection.patch,
+            path=self.path + '{idx}/extendedPermissions'.format(idx=entity.id),
+            data=data,
+        )
+
 
 class Project(Entity):
     entity = 'project'
