@@ -1,3 +1,17 @@
+yandex-tracker-client (2.10)
+
+  * Support endpoint for updating access permissions of meta entities
+  * Support endpoint for importing meta entities
+  * Add method for changing queue access permissions
+  * Add query field to AutoActions
+  * Add AutoActions collection
+  * Add support for triggers, macros, and local fields
+  * Add JsonDecodeException
+  * Add FieldCategories collection
+  * Add support for entities
+
+ -- Max Shulikov <shulikovmax@yandex-team.ru>  Tue, 02 Dec 2025 16:00:00 +0300
+
 yandex-tracker-client (2.9)
 
   * DEVTOOLSSUPPORT-58027: fix opensource email
