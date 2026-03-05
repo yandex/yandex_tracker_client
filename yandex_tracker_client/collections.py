@@ -1474,7 +1474,7 @@ class LocalFields(Collection):
 
 
 class EntityComments(Collection):
-    path = '/{api_version}/entities/{entity}/{idx}/comments'
+    path = '/{api_version}/entities/{entity}/{idx}/comments/{id}'
     fields = IssueComments.fields
 
     _priority = 1
