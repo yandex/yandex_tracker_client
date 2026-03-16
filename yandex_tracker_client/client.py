@@ -7,10 +7,9 @@ __all__ = ['TrackerClient']
 
 
 class TrackerClient(object):
-    connector = Connection
-
     def __init__(self, *args, **kwargs):
         self._collections = {}
+        self.connector = kwargs.pop('connector', Connection)
 
         conn = kwargs.pop('connection', None)
 
