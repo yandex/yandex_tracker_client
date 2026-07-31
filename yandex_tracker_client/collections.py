@@ -766,6 +766,21 @@ class Queues(Collection):
         return data
 
     @injected_property
+    def show_default_creation_form(self, queue):
+        """Whether the default issue creation form is available to the current
+        user in this queue. False means issues can be created only through a
+        queue form (createIssueFormShowType 'never', or 'team' when the user is
+        not a member of the queue team). Computed by the server for the
+        requesting user and returned alongside the queue forms."""
+        data = self._execute_request(
+            self._connection.get,
+            path=queue._path + '/forms',
+        )
+        if isinstance(data, dict):
+            return bool(data.get('showDefaultCreationForm', True))
+        return True
+
+    @injected_property
     def workflows(self, queue):
         return self._execute_request(
             self._connection.get,

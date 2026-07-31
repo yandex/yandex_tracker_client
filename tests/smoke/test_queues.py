@@ -72,7 +72,7 @@ def test_queue_local_field_create(net_mock, mocked_fake_queue):
     assert real_request == data
 
 
-def test_queue_local_field_create__with_filter(net_mock, mocked_fake_queue):
+def test_queue_autoactions_create__with_filter(net_mock, mocked_fake_queue):
     data = {
         "name": "Test auto action",
         "filter": {
@@ -91,7 +91,7 @@ def test_queue_local_field_create__with_filter(net_mock, mocked_fake_queue):
     net_mock.post(
         api_url('/queues/{queue_key}/autoactions/'.format(queue_key=mocked_fake_queue.key)),
     )
-    mocked_fake_queue.collection.macros.create(**data)
+    mocked_fake_queue.collection.autoactions.create(**data)
     real_request = net_mock.request_history[1].json()
     assert real_request == data
 
@@ -112,7 +112,7 @@ def test_queue_autoactions_create__with_query(net_mock, mocked_fake_queue):
     net_mock.post(
         api_url('/queues/{queue_key}/autoactions/'.format(queue_key=mocked_fake_queue.key)),
     )
-    mocked_fake_queue.collection.macros.create(**data)
+    mocked_fake_queue.collection.autoactions.create(**data)
     real_request = net_mock.request_history[1].json()
     assert real_request == data
 
@@ -191,6 +191,44 @@ def test_queue_forms_get_list_with_self(net_mock, mocked_fake_queue):
     assert len(forms) == 1
     assert isinstance(forms[0], Resource)
     assert forms[0].id == 173454
+
+
+def test_queue_show_default_creation_form_false(net_mock, mocked_fake_queue):
+    net_mock.get(
+        api_url('/queues/{}/forms'.format(mocked_fake_queue.key)),
+        json={
+            'queue': {
+                'self': api_url('/queues/{}'.format(mocked_fake_queue.key)),
+                'key': mocked_fake_queue.key,
+            },
+            'forms': [{'id': 173454, 'name': 'Form A'}],
+            'version': 2,
+            'showDefaultCreationForm': False,
+        },
+    )
+    assert mocked_fake_queue.show_default_creation_form is False
+
+
+def test_queue_show_default_creation_form_true(net_mock, mocked_fake_queue):
+    net_mock.get(
+        api_url('/queues/{}/forms'.format(mocked_fake_queue.key)),
+        json={
+            'queue': {'key': mocked_fake_queue.key},
+            'forms': [],
+            'version': 0,
+            'showDefaultCreationForm': True,
+        },
+    )
+    assert mocked_fake_queue.show_default_creation_form is True
+
+
+def test_queue_show_default_creation_form_defaults_true(net_mock, mocked_fake_queue):
+    # Absent flag (e.g. bare list response) is treated as "form available".
+    net_mock.get(
+        api_url('/queues/{}/forms'.format(mocked_fake_queue.key)),
+        json=[],
+    )
+    assert mocked_fake_queue.show_default_creation_form is True
 
 
 def test_queue_macros_create(net_mock, mocked_fake_queue):
