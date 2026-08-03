@@ -965,6 +965,20 @@ class IssueComments(ImportCollectionMixin, Collection):
         _upload_attachments(self, kwargs)
         return super(IssueComments, self).update(obj, **kwargs)
 
+    @injected_method
+    def add_reaction(self, comment, reaction):
+        return self._execute_request(
+            self._connection.post,
+            path=comment._path + '/reactions/{}'.format(reaction),
+        )
+
+    @injected_method
+    def remove_reaction(self, comment, reaction):
+        return self._execute_request(
+            self._connection.delete,
+            path=comment._path + '/reactions/{}'.format(reaction),
+        )
+
 
 class Links(Collection):
     path = '/{api_version}/links/{id}'
@@ -1154,6 +1168,32 @@ class Worklog(Collection):
             params=params,
         )
 
+    search_path = '/{api_version}/worklog/_search'
+
+    def search(self, created_by=None, created_at=None, start=None,
+               page=None, per_page=None, **kwargs):
+        # POST /v2/worklog/_search — unlike the GET find(), this accepts a
+        # login for createdBy and native {from, to} datetime ranges, and
+        # paginates via the page/perPage query params (page * perPage <= 10000).
+        data = dict(kwargs)
+        if created_by is not None:
+            data['createdBy'] = created_by
+        if created_at is not None:
+            data['createdAt'] = created_at
+        if start is not None:
+            data['start'] = start
+        params = {}
+        if page is not None:
+            params['page'] = page
+        if per_page is not None:
+            params['perPage'] = per_page
+        return self._execute_request(
+            self._connection.post,
+            path=self.search_path,
+            params=params,
+            data=data,
+        )
+
 
 class IssueWorklog(Collection, ImportCollectionMixin):
     path = '/{api_version}/issues/{issue}/worklog/{id}'
@@ -1316,6 +1356,8 @@ class Boards(Collection):
         'country': None,
     }
 
+    suggest_path = '/{api_version}/boards/_suggest'
+
     @injected_property
     def columns(self, board):
         return self._associated(BoardColumns, board=board.id)
@@ -1323,6 +1365,23 @@ class Boards(Collection):
     @injected_property
     def sprints(self, board):
         return self._associated(BoardSprints, board=board.id)
+
+    @injected_property
+    def notes(self, board):
+        return self._associated(BoardNotes, board=board.id)
+
+    @injected_property
+    def quick_filters(self, board):
+        return self._associated(BoardQuickFilters, board=board.id)
+
+    def suggest(self, input, **kwargs):
+        params = dict(kwargs)
+        params['input'] = input
+        return self._execute_request(
+            self._connection.get,
+            path=self.suggest_path,
+            params=params,
+        )
 
 
 class BoardColumns(Collection):
@@ -1335,6 +1394,110 @@ class BoardColumns(Collection):
         'statuses': [],
     }
     _priority = 1
+
+
+class BoardNotes(Collection):
+    """Notes attached to board columns.
+
+    The resource id in the path is the column id: a board has at most one
+    note per column, so create/update/delete all address /notes/{columnId}.
+    The response carries no ``self``/``id`` (only ``columnId``, ``version``,
+    ``text``, ``textHtml``), so a note is not a self-describing resource.
+    """
+    path = '/{api_version}/boards/{board}/notes/{id}'
+    list_path = '/{api_version}/boards/{board}/notes'
+    fields = {
+        'columnId': None,
+        'version': None,
+        'text': None,
+        'textHtml': None,
+    }
+    _priority = 1
+
+    def get_all(self, **params):
+        # The list endpoint is /notes (no trailing columnId slot); avoid the
+        # base implementation which would append a trailing slash.
+        return self._execute_request(
+            self._connection.get,
+            path=self.list_path,
+            params=params,
+        )
+
+    def create_for_column(self, column_id, text):
+        return self._execute_request(
+            self._connection.post,
+            path=self.path,
+            params={'id': column_id},
+            data={'text': text},
+        )
+
+    def update_for_column(self, column_id, text):
+        return self._execute_request(
+            self._connection.patch,
+            path=self.path,
+            params={'id': column_id},
+            data={'text': text},
+        )
+
+    def delete_for_column(self, column_id):
+        return self._execute_request(
+            self._connection.delete,
+            path=self.path,
+            params={'id': column_id},
+        )
+
+
+class BoardQuickFilters(Collection):
+    """Quick filters of an Agile board.
+
+    The filter query is sent inside ``searchRequest`` (a plain TQL string in
+    ``searchRequest.query``), as required by the Tracker API — there is no
+    top-level ``query`` field. Note also the delete endpoint path is singular
+    (/quick-filter/{id}) while add and update use the plural (/quick-filters).
+    """
+    path = '/{api_version}/boards/{board}/quick-filters/{id}'
+    fields = {
+        'id': None,
+        'self': None,
+        'name': None,
+        'description': None,
+        'shared': None,
+    }
+    _priority = 1
+
+    add_path = '/{api_version}/boards/{board}/quick-filters'
+    delete_path = '/{api_version}/boards/{board}/quick-filter/{id}'
+
+    def add(self, name, query=None, **kwargs):
+        data = dict(kwargs)
+        data['name'] = name
+        if query is not None:
+            data['searchRequest'] = {'query': query}
+        return self._execute_request(
+            self._connection.post,
+            path=self.add_path,
+            data=data,
+        )
+
+    def update_filter(self, quick_filter_id, name=None, query=None, **kwargs):
+        data = dict(kwargs)
+        if name is not None:
+            data['name'] = name
+        if query is not None:
+            data['searchRequest'] = {'query': query}
+        return self._execute_request(
+            self._connection.patch,
+            path=self.path,
+            params={'id': quick_filter_id},
+            data=data,
+        )
+
+    def delete_filter(self, quick_filter_id):
+        return self._execute_request(
+            self._connection.delete,
+            path=self.delete_path,
+            params={'id': quick_filter_id},
+        )
 
 
 class BulkChange(Collection):
@@ -1457,6 +1620,26 @@ class Filters(Collection):
         'query': None,
         'groupBy': None,
     }
+
+    @injected_method
+    def favorite(self, flt):
+        return self._execute_request(
+            self._connection.post,
+            path=flt._path + '/_favorite',
+        )
+
+    @injected_method
+    def unfavorite(self, flt):
+        return self._execute_request(
+            self._connection.post,
+            path=flt._path + '/_unfavorite',
+        )
+
+    def get_favorites(self):
+        return self._execute_request(
+            self._connection.get,
+            path='/{api_version}/myself/favorites/filters',
+        )
 
 
 class checklistItems(Collection):
