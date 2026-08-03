@@ -60,6 +60,7 @@ class TrackerServerError(TrackerError, IOError):
     reason = None
     errors = None
     error_messages = None
+    errors_data = None
 
     def __init__(self, response):
         self.response = response
@@ -72,6 +73,7 @@ class TrackerServerError(TrackerError, IOError):
         else:
             self.errors = error.get('errors')
             self.error_messages = error.get('errorMessages')
+            self.errors_data = error.get('errorsData')
         super(TrackerServerError, self).__init__(response)
 
     def __str__(self):
