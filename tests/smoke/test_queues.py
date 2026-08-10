@@ -72,6 +72,39 @@ def test_queue_local_field_create(net_mock, mocked_fake_queue):
     assert real_request == data
 
 
+def test_queue_local_field_update(net_mock, mocked_fake_queue):
+    data = {
+        "name": {
+            "en": "test_name_en_upd",
+            "ru": "test_name_ru_upd"
+        },
+        "description": "test description",
+        "order": 100,
+    }
+    net_mock.patch(
+        api_url('/queues/{queue_key}/localFields/testLocalFieldId'.format(queue_key=mocked_fake_queue.key)),
+    )
+    mocked_fake_queue.collection.local_fields.update_field('testLocalFieldId', **data)
+    real_request = net_mock.request_history[1]
+    assert real_request.json() == data
+
+
+def test_queue_local_field_update_uses_queue_scoped_path(net_mock, mocked_fake_queue):
+    # The field's own `self` link points at the global /localFields/{id} handle, which serves
+    # GET only, so the PATCH has to go to the queue-scoped one addressed by the field key.
+    net_mock.patch(
+        api_url('/queues/{queue_key}/localFields/testLocalFieldId'.format(queue_key=mocked_fake_queue.key)),
+    )
+    mocked_fake_queue.collection.local_fields.update_field('testLocalFieldId', order=1)
+
+    real_request = net_mock.request_history[1]
+    assert real_request.method == 'PATCH'
+    # requests_mock lowercases the path it reports
+    assert real_request.path.endswith(
+        '/queues/{queue_key}/localfields/testlocalfieldid'.format(queue_key=mocked_fake_queue.key.lower())
+    )
+
+
 def test_queue_autoactions_create__with_filter(net_mock, mocked_fake_queue):
     data = {
         "name": "Test auto action",

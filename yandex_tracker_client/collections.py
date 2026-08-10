@@ -868,6 +868,25 @@ class QueueLocalFields(Collection):
         'type': None
     }
 
+    def update_field(self, key, params=None, **kwargs):
+        """Update a local field of the queue, addressing it by its key.
+
+        A local field is served by two handles: the queue-scoped one this
+        collection is built on, and a global /{api_version}/localFields/{id}
+        one. Only the queue-scoped handle accepts PATCH, and it is addressed
+        by the field key ('myField'), not by the long id ('<hex>--myField').
+
+        The inherited `update` cannot be used here: it PATCHes the resource's
+        own path, and a fetched field carries the global, GET-only one in its
+        `self` link.
+        """
+        return self._execute_request(
+            self._connection.patch,
+            path=self.path,
+            params=dict(params or {}, id=key),
+            data=kwargs,
+        )
+
 
 class AutoActions(Collection):
     path = '/{api_version}/queues/{queue}/autoactions/{id}'
